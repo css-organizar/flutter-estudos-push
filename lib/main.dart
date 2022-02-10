@@ -11,11 +11,17 @@ Future<void> _messageHandler(RemoteMessage message) async {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await init();
+
+  runApp(
+    const ApplicationWidget(),
+  );
+}
+
+init() async {
   await Firebase.initializeApp();
   FirebaseMessaging.onBackgroundMessage(_messageHandler);
 
   debugPrint = (String? message, {int? wrapWidth}) {};
-  runApp(
-    const ApplicationWidget(),
-  );
 }
