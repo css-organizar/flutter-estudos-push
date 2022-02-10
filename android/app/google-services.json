@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "280596904279",
+    "project_id": "estudos-push-446b4",
+    "storage_bucket": "estudos-push-446b4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:280596904279:android:873f6857321c27b3c96612",
+        "android_client_info": {
+          "package_name": "br.com.claudneysessa.flutter_estudos_push_envio"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "280596904279-e5nkk257gtv6t5hsel72glbptcom6dju.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "br.com.claudneysessa.flutter_estudos_push_envio",
+            "certificate_hash": "7d62e127a015987149cb49794cc0023dc4a9b719"
+          }
+        },
+        {
+          "client_id": "280596904279-ohbc3shcb4tn3ijr0qvpolaha7n7v4vj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCZG7eQkGN4kZdWkcUvP2QUFsCSq0rELwc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "280596904279-ohbc3shcb4tn3ijr0qvpolaha7n7v4vj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
