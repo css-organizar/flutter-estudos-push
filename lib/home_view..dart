@@ -52,18 +52,27 @@ class _HomeViewState extends State<HomeView> {
     messaging.getToken().then(
       (value) {
         appKey = value ?? '';
+        print(appKey);
       },
     );
 
     FirebaseMessaging.onMessage.listen(
       (RemoteMessage event) {
         print('message1 - Recebeu em primeiro planos');
-        print(event.notification!.title);
-        print(event.notification!.body);
+        print('title: ${event.notification!.title}');
+        print('body: ${event.notification!.body}');
+        print('bodyLocArgs: ${event.notification!.bodyLocArgs}');
+        print('bodyLocKey: ${event.notification!.bodyLocKey}');
+        print('titleLocArgs: ${event.notification!.titleLocArgs}');
+        print('titleLocKey: ${event.notification!.titleLocKey}');
 
-        //notificationNoSound();
-        //notificationDefaultSound();
-        //notificationCustomSound();
+        print('channelId: ${event.notification!.android!.channelId.toString()}');
+        print('link: ${event.notification!.android!.link.toString()}');
+        print('ticker: ${event.notification!.android!.ticker.toString()}');
+        print('channelId: ${event.notification!.android!.channelId.toString()}');
+        print('channelId: ${event.notification!.android!.channelId.toString()}');
+        print('tag: ${event.notification!.android!.tag.toString()}');
+
         notificationScheduled(
           event.notification!.title!,
           event.notification!.body!,
@@ -83,17 +92,30 @@ class _HomeViewState extends State<HomeView> {
     var androidPlatformChannelSpecifics = const AndroidNotificationDetails(
       'Notification Channel ID',
       'Channel Name',
-      importance: Importance.max,
-      priority: Priority.high,
+      importance: Importance.low,
+      priority: Priority.low,
+      playSound: true,
+      color: Colors.amber,
+      ledOffMs: 3,
+      ledOnMs: 5,
+      ledColor: Colors.greenAccent,
+      enableLights: true,
+      showProgress: true,
+      visibility: NotificationVisibility.private,
     );
 
     var iOSPlatformChannelSpecifics = const IOSNotificationDetails();
 
-    var platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics, iOS: iOSPlatformChannelSpecifics);
+    var platformChannelSpecifics = NotificationDetails(
+      android: androidPlatformChannelSpecifics,
+      iOS: iOSPlatformChannelSpecifics,
+    );
+
+    DateTime datahora = DateTime.now();
+    var notificationId = '${datahora.hour}${datahora.minute}${datahora.second}';
 
     flutterNotificationPlugin.show(
-      0,
+      int.parse(notificationId),
       'New Alert',
       'How to show Local Notification',
       platformChannelSpecifics,
@@ -106,8 +128,8 @@ class _HomeViewState extends State<HomeView> {
       'Notification Channel ID',
       'Channel Name',
       playSound: false,
-      importance: Importance.max,
-      priority: Priority.high,
+      importance: Importance.low,
+      priority: Priority.low,
     );
 
     var iOSPlatformChannelSpecifics = const IOSNotificationDetails(presentSound: false);
@@ -128,14 +150,16 @@ class _HomeViewState extends State<HomeView> {
     var androidPlatformChannelSpecifics = const AndroidNotificationDetails(
       'Notification Channel ID',
       'Channel Name',
-      importance: Importance.max,
-      priority: Priority.high,
+      importance: Importance.low,
+      priority: Priority.low,
     );
 
     var iOSPlatformChannelSpecifics = const IOSNotificationDetails(sound: 'slow_spring_board.aiff');
 
-    var platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics, iOS: iOSPlatformChannelSpecifics);
+    var platformChannelSpecifics = NotificationDetails(
+      android: androidPlatformChannelSpecifics,
+      iOS: iOSPlatformChannelSpecifics,
+    );
 
     flutterNotificationPlugin.show(
       0,
@@ -148,8 +172,11 @@ class _HomeViewState extends State<HomeView> {
 
   Future<void> notificationScheduled(String title, String body) async {
     tz.initializeTimeZones();
+
     var time = tz.TZDateTime.now(tz.local).add(const Duration(seconds: 15));
+
     messageId++;
+
     await flutterNotificationPlugin.zonedSchedule(
       messageId,
       title,
@@ -160,6 +187,8 @@ class _HomeViewState extends State<HomeView> {
           'your channel id',
           'your channel name',
           channelDescription: 'your channel description',
+          importance: Importance.low,
+          priority: Priority.low,
         ),
       ),
       androidAllowWhileIdle: true,
@@ -171,7 +200,7 @@ class _HomeViewState extends State<HomeView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text(DateTime.now().toIso8601String()),
         centerTitle: true,
       ),
       body: Center(
@@ -198,28 +227,84 @@ class _HomeViewState extends State<HomeView> {
                   ),
                 ),
               ),
-              ElevatedButton(
-                onPressed: () {
-                  http.post(
-                    Uri.parse('https://fcm.googleapis.com/fcm/send'),
-                    headers: <String, String>{
-                      'Authorization': ApplicationConfig.fireMessageKey,
-                      'Content-Type': 'application/json',
-                    },
-                    body: jsonEncode(
-                      <String, dynamic>{
-                        'to': appKey,
-                        'collapse_key': 'New Message',
-                        'priority': 'high',
-                        'notification': {
-                          'title': titleController.text,
-                          'body': bodyController.text,
-                        }
+              SizedBox(
+                width: 250,
+                height: 45,
+                child: ElevatedButton(
+                  onPressed: () {
+                    http.post(
+                      Uri.parse('https://fcm.googleapis.com/fcm/send'),
+                      headers: <String, String>{
+                        'Authorization': ApplicationConfig.fireMessageKey,
+                        'Content-Type': 'application/json',
                       },
-                    ),
-                  );
-                },
-                child: const Text('Enviar Notificação'),
+                      body: jsonEncode(
+                        <String, dynamic>{
+                          'to': appKey,
+                          'collapse_key': 'New Message',
+                          'priority': 'high',
+                          'notification': {
+                            'title': titleController.text,
+                            'body': bodyController.text,
+                          }
+                        },
+                      ),
+                    );
+                  },
+                  child: const Text('Enviar Notificação via FCM'),
+                ),
+              ),
+              const SizedBox(
+                height: 5,
+              ),
+              SizedBox(
+                width: 250,
+                height: 45,
+                child: ElevatedButton(
+                  onPressed: () {
+                    notificationDefaultSound();
+                  },
+                  child: const Text('Enviar Notificação DefaultSound'),
+                ),
+              ),
+              const SizedBox(
+                height: 5,
+              ),
+              SizedBox(
+                width: 250,
+                height: 45,
+                child: ElevatedButton(
+                  onPressed: () {
+                    notificationNoSound();
+                  },
+                  child: const Text('Enviar Notificação NoSound'),
+                ),
+              ),
+              const SizedBox(
+                height: 5,
+              ),
+              SizedBox(
+                width: 250,
+                height: 45,
+                child: ElevatedButton(
+                  onPressed: () {
+                    notificationCustomSound();
+                  },
+                  child: const Text('Enviar Notificação CustomSound'),
+                ),
+              ),
+              const SizedBox(
+                height: 5,
+              ),
+              SizedBox(
+                width: 250,
+                height: 45,
+                child: ElevatedButton(
+                  onPressed: () {
+                    notificationScheduled('Notificação Agendada', 'Claudney');
+                  },
+                  child: const Text('Enviar Notificação Scheduller'),
+                ),
               ),
             ],
           ),
